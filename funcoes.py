@@ -20,10 +20,12 @@ def criarArquivo(nome, cabecalho):
 
 def ver_planilha(nome):
     file=open(nome,"r")
+    for linha in file:
+        dado = linha.split(',')
+        dado[2] = dado[2].replace('\n', '')
+        print(f'{dado[0]:^12}{dado[1]:^12}{dado[2]:^12}')
     print(file.read())
     file.close()
-
-
 
 
 def incluir_gastos(): 
@@ -54,3 +56,15 @@ def atualizar_gastos():
     file.close()
     print("Gastos atualizados com sucesso.")
 
+def filtrar(nome):
+    filtro = input("O que deseja filtrar? ")
+    file = open(nome, "r")
+    for linha in file:
+        dado = linha.lower().split(',')
+        dado[2] = dado[2].replace('\n', '')
+        for j in dado:
+            if j == filtro:
+                dado[2] = dado[2].replace('\n', '')
+                print(f'{dado[0]:^12}{dado[1]:^12}{dado[2]:^12}')
+    print(file.read())
+    file.close()

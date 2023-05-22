@@ -1,4 +1,5 @@
-Nome;Categoria;Valor Gasto
-teste2,teste2,123.21
-Julia,roupa,500.0
+Nome,Categoria,Valor Gasto
+Casa,condomínio,123.21
+Pessoal,roupa,500.0
 Casa,Água ,150.0
+Casa,Gás ,90.0

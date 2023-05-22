@@ -1,7 +1,6 @@
 import menu
 import os
 import funcoes as fc
-import csv
 # planilha_gastos=fc.incluir_gastos(nome='planilha_gastos.csv', cabecalho='Nome;Categoria;Valor Gasto ')
 # lerPlanilha = fc.ver_planilha(nome='planilha_gastos.csv')
 # criar_arq = fc.criarArquivo(nome="planilha_gastos.csv", cabecalho='Nome;Categoria;Valor Gasto ')
@@ -12,19 +11,21 @@ while True:
     if resposta > 6:
         os.system('clear')
         print('\33[31mInsira algum valor de acordo com o menu de navegação\33[m')
-    else:
+    elif resposta == 0:
+        print('\33[31mPrograma encerrado\33[m')
         break
-if resposta == 1: 
-        if not fc.arquivoExiste("planilha_gastos.csv"):
-            fc.criarArquivo(nome="planilha_gastos.csv", cabecalho='Nome;Categoria;Valor Gasto ')
-        else: 
-             print("Arquivo já existe")
-elif resposta == 2:
-    fc.ver_planilha(nome)
-elif resposta == 3:
-    fc.incluir_gastos()
-elif resposta == 4:
-    fc.ver_planilha(nome)
-    fc.atualizar_gastos()
-elif resposta == 6:
-     fc.filtrar()
+    elif resposta == 1: 
+            if not fc.arquivoExiste("planilha_gastos.csv"):
+                fc.criarArquivo(nome="planilha_gastos.csv", cabecalho='Nome,Categoria,Valor Gasto ')
+            else: 
+                print("Arquivo já existe")
+    elif resposta == 2:
+        fc.ver_planilha(nome)
+    elif resposta == 3:
+        fc.incluir_gastos()
+        os.system('clear')
+    elif resposta == 4:
+        fc.ver_planilha(nome)
+        fc.atualizar_gastos()
+    elif resposta == 6:
+        fc.filtrar(nome)
