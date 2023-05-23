@@ -1,5 +1,5 @@
-Nome,Categoria,Valor Gasto
-Casa,condomínio,123.21
-Pessoal,roupa,500.0
-Casa,Água ,150.0
-Casa,Gás ,90.0
+nome,categoria,valor gasto
+bebida,pessoal,200.0
+gás ,casa,100.0
+festa,pessoal,400.0
+energia,casa,300.0

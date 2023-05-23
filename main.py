@@ -23,9 +23,10 @@ while True:
         fc.ver_planilha(nome)
     elif resposta == 3:
         fc.incluir_gastos()
-        os.system('clear')
     elif resposta == 4:
         fc.ver_planilha(nome)
         fc.atualizar_gastos()
+    elif resposta == 5:
+        fc.deletar(nome)
     elif resposta == 6:
         fc.filtrar(nome)

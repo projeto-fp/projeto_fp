@@ -1,4 +1,3 @@
-import csv
 def arquivoExiste(nome):
     try:
         file = open(nome, 'r')
@@ -32,10 +31,10 @@ def incluir_gastos():
     nome=input('Digite o nome do gasto: ')
     categoria=input('Qual a categoria que ele pertence: ')
     valor=float(input('Qual valor gasto: '))
-    with open('planilha_gastos.csv', 'a', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow([nome,categoria,valor])
-        file.close()
+    file= open('planilha_gastos.csv', 'a')
+    linha = f'\n{nome},{categoria},{valor}'
+    file.write(linha)
+    file.close()
     print('Gasto incluído com sucesso.')
 
 
@@ -57,14 +56,36 @@ def atualizar_gastos():
     print("Gastos atualizados com sucesso.")
 
 def filtrar(nome):
-    filtro = input("O que deseja filtrar? ")
-    file = open(nome, "r")
-    for linha in file:
-        dado = linha.lower().split(',')
-        dado[2] = dado[2].replace('\n', '')
-        for j in dado:
-            if j == filtro:
-                dado[2] = dado[2].replace('\n', '')
-                print(f'{dado[0]:^12}{dado[1]:^12}{dado[2]:^12}')
-    print(file.read())
+    try:
+        filtro = input("O que deseja pesquisar? ")
+        file = open(nome, "r")
+        for linha in file:
+            dado = linha.lower().split(',')
+            for j in dado:
+                if j == filtro:
+                    dado[2] = dado[2].replace('\n', '')
+                    print(f'{dado[0]:^12}{dado[1]:^12}{dado[2]:^12}')
+    except ValueError:
+        print("Entrada inválida")
     file.close()
+
+def deletar(nome):
+    arr_arq = []
+    with open(nome, "r+") as file:
+        for indice, linha in enumerate(file):
+            dado = linha.lower().split(',')
+            arr_arq.append(dado)
+            dado[2] = dado[2].replace('\n', '')
+            print(f'{indice:^12}{dado[0]:^12}{dado[1]:^12}{dado[2]:^12}')
+    
+    delecao = int(input("Digite o número da linha que deseja deletar: "))
+
+    if delecao < len(arr_arq):
+        arr_arq.pop(delecao)
+    else:
+        print("O número da linha é inválido.")
+
+    with open("planilha_gastos.csv", "w") as file:
+        for linha in arr_arq:
+            file.write(','.join(linha) + '\n')
+    return
