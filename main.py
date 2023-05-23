@@ -15,7 +15,7 @@ while True:
         print('\33[31mPrograma encerrado\33[m')
         break
     elif resposta == 1: 
-            if not fc.arquivoExiste("planilha_gastos.csv"):
+            if not fc.arquivoExiste(nome):
                 fc.criarArquivo(nome="planilha_gastos.csv", cabecalho='Nome,Categoria,Valor Gasto ')
             else: 
                 print("Arquivo já existe")
