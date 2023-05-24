@@ -1,10 +1,8 @@
 import menu
 import os
 import funcoes as fc
-# planilha_gastos=fc.incluir_gastos(nome='planilha_gastos.csv', cabecalho='Nome;Categoria;Valor Gasto ')
-# lerPlanilha = fc.ver_planilha(nome='planilha_gastos.csv')
-# criar_arq = fc.criarArquivo(nome="planilha_gastos.csv", cabecalho='Nome;Categoria;Valor Gasto ')
-nome = 'planilha_gastos.csv'
+
+nome = 'planilha.csv'
 os.system('clear')
 while True:
     resposta = menu.navegacao('Natália - Despesas Pessoais', ['Criar Planilha','Ver Planilha', 'Incluir gastos','Atualizar gastos', 'Deletar gastos', 'Pesquisar', 'Soma Gastos', 'Criar Meta', 'Ver Meta'])
@@ -16,21 +14,24 @@ while True:
         break
     elif resposta == 1: 
             if not fc.arquivoExiste(nome):
-                fc.criarArquivo(nome="planilha_gastos.csv", cabecalho='Nome,Categoria,Valor Gasto ')
+                fc.criarArquivo(nome="planilha.csv", cabecalho='Nome,Categoria,Valor')
             else: 
                 print("Arquivo já existe")
     elif resposta == 2:
         fc.ver_planilha(nome)
     elif resposta == 3:
-        fc.incluir_gastos()
+        if not fc.arquivoExiste(nome):
+            break
+        else: 
+            fc.incluir_gastos(nome)
     elif resposta == 4:
-        fc.atualizar_gastos()
+        fc.atualizar_gastos(nome)
     elif resposta == 5:
         fc.deletar(nome)
     elif resposta == 6:
         fc.filtrar(nome)
     elif resposta == 7:
-        fc.soma_categoria()
+        fc.soma_categoria(nome)
     elif resposta == 8:
         fc.criar_meta()
     elif resposta == 9:

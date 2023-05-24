@@ -13,8 +13,8 @@ def criarArquivo(nome, cabecalho):
         file.write(f'{cabecalho}')
         file.close()
         print(f"Arquivo {nome} criado com sucesso")
-    except OSError:
-        print("Erro ao criar arquivo")
+    except Exception:
+        print("\33[31mErro ao criar arquivo\33[m")
 
 def ver_planilha(nome):
     try:
@@ -28,48 +28,49 @@ def ver_planilha(nome):
     except FileNotFoundError:
         print('\33[31mPlanilha não existe. Escolha a opção 1 para criar a planilha.\33[m')
 
-def incluir_gastos():
+def incluir_gastos(nome):
     try:
-        nome = input('Digite o nome do gasto: ')
+        nome_ = input('Digite o nome: ')
         categoria = input('Qual a categoria que ele pertence: ')
         valor = float(input('Qual valor gasto: '))
-        file = open('planilha_gastos.csv', 'a')
-        linha = f'\n{nome},{categoria},{valor}'
+        file = open(nome, 'a')
+        linha = f'\n{nome_},{categoria},{valor}'
         file.write(linha)
         file.close()
         print('\33[31mGasto incluído com sucesso.\33[m')
+    except FileNotFoundError:
+        print('\33[31mPlanilha não encontrada\33[m')
     except ValueError:
         print('\33[31mErro: Valor inválido. Certifique-se de digitar um número válido para o valor gasto.\33[m')
-    except IOError:
-        print('\33[31mErro: Ocorreu um problema ao abrir ou gravar o arquivo.\33[m')
-    except Exception as e:
-        print('\33[31mOcorreu um erro inesperado:\33[m', e)
 
-def atualizar_gastos():
-    file = open("planilha_gastos.csv", "r")
-    linhas = list(file.readlines())
-    file.close()
-    for indice, linha in enumerate(linhas):
-        dado = linha.strip().split(',')
-        print(f'{indice}{dado[0]:^12}{dado[1]:^12}{dado[2]:^12}')
-
-    linha_at = int(input("Qual linha você deseja atualizar? "))
-    qnt_at = int(input("Quantas partes você quer atualizar? "))
-    for i in range(qnt_at):
-        coluna = input("Qual coluna você deseja atualizar? (nome, categoria ou valor) ")
-        nova_palavra = input("O que você deseja colocar? ")
-        atualizado= linhas[linha_at].strip().split(',')
-        if coluna=="nome":
-            atualizado[0] = nova_palavra
-        if coluna=="categoria":
-            atualizado[1] = nova_palavra
-        if coluna=="valor":
-            atualizado[2] = (nova_palavra)
-        linhas[linha_at] = ','.join(atualizado) + '\n'
-        file = open("planilha_gastos.csv", "w")
-        file.writelines(linhas)
+def atualizar_gastos(nome):
+    try:
+        file = open(nome, "r")
+        linhas = list(file.readlines())
         file.close()
-        print("Gastos atualizados com sucesso.")
+        for indice, linha in enumerate(linhas):
+            dado = linha.strip().split(',')
+            print(f'{indice}{dado[0]:^12}{dado[1]:^12}{dado[2]:^12}')
+
+        linha_at = int(input("Qual linha você deseja atualizar? "))
+        qnt_at = int(input("Quantas partes você quer atualizar? "))
+        for i in range(qnt_at):
+            coluna = input("Qual coluna você deseja atualizar? (nome, categoria ou valor) ")
+            nova_palavra = input("O que você deseja colocar? ")
+            atualizado= linhas[linha_at].strip().split(',')
+            if coluna=="nome":
+                atualizado[0] = nova_palavra
+            if coluna=="categoria":
+                atualizado[1] = nova_palavra
+            if coluna=="valor":
+                atualizado[2] = (nova_palavra)
+            linhas[linha_at] = ','.join(atualizado) + '\n'
+            file = open(nome, "w")
+            file.writelines(linhas)
+            file.close()
+            print("Gastos atualizados com sucesso.")
+    except FileNotFoundError:
+        print("\33[31mArquivo não encontrado.\33[m")
 
 def filtrar(nome):
     try:
@@ -104,60 +105,70 @@ def deletar(nome):
         else:
             print("O número da linha é inválido.")
 
-        with open("planilha_gastos.csv", "w") as file:
+        with open("planilha.csv", "w") as file:
             for linha in arr_arq:
                 file.write(','.join(linha) + '\n')
         file.close()
-        ver_planilha(nome)
+        print("\33[31mLinha deletada.\33[m")
     except ValueError:
          print("\33[31mEntrada inválida. Certifique-se de digitar um número inteiro.\33[m")
 
-def soma_categoria():
+def soma_categoria(nome):
     cont=0
     filtro = input("Qual categoria você deseja ver a soma? ")
-    file = open("planilha_gastos.csv", "r")
-    for linha in file:
-        i=0
-        dado = linha.split(',')
-        dado[i] = dado[i].replace('\n', '')
-        i+=1
-        for j in dado:
-            if j == filtro:
-                print(f'{dado[0]:^12}{dado[1]:^12}{dado[2]:^12}')
-                inteiro=float(dado[2])
-                cont=cont+inteiro
-    print(f'A soma total da categoria {filtro} R${cont}')
-    file.close()
+    try:
+        file = open(nome, "r")
+        for linha in file:
+            i=0
+            dado = linha.split(',')
+            dado[i] = dado[i].replace('\n', '')
+            i+=1
+            for j in dado:
+                if j == filtro:
+                    print(f'{dado[0]:^12}{dado[1]:^12}{dado[2]:^12}')
+                    inteiro=float(dado[2])
+                    cont=cont+inteiro
+        print(f'A soma total da categoria {filtro} R${cont}')
+    except FileNotFoundError:
+        print("\33[31mArquivo não encontrado.\33[m")
+    finally:
+        if 'file' in locals():
+            file.close()
 
 def criar_meta():
-    nome_cofrinho=input("Digite um título para sua meta(sugestão: o nome do objeto): ")
-    preco_cofrinho=float(input("Digite o valor da sua meta: \n"))
-    file=open("meta.csv","w")
-    file.write(f"{nome_cofrinho}\n")
-    file.write(f"{preco_cofrinho}")
-    file.close()
-
+    try:
+        nome_cofrinho=input("Digite um título para sua meta(sugestão: o nome do objeto): ")
+        preco_cofrinho=float(input("Digite o valor da sua meta: \n"))
+        file=open("meta.csv","w")
+        file.write(f"{nome_cofrinho}\n")
+        file.write(f"{preco_cofrinho}")
+        file.close()
+    except Exception:
+        print("Erro ao criar arquivo")
 
 def ver_meta():
-    linhas_cofre=[]
-    file=open("meta.csv","r")
-    for linha in file:
-        linhas_cofre.append(linha.strip())
-    file.close()
+    try:
+        linhas_cofre=[]
+        file=open("meta.csv","r")
+        for linha in file:
+            linhas_cofre.append(linha.strip())
+        file.close()
 
-    nome_cofrinho_arq=str(linhas_cofre[0])
-    preco_cofrinho_arq=float(linhas_cofre[1])
+        nome_cofrinho_arq=str(linhas_cofre[0])
+        preco_cofrinho_arq=float(linhas_cofre[1])
 
-    cont=0
-    file=open("planilha_gastos.csv","r")
-    for linha in file:
-        dados = linha.lower().split(',')
-        if 'meta' == dados[1] and nome_cofrinho_arq == dados[0]:
-            print(f'{dados[0]:^12}{dados[1]:^12}{dados[2]:^12}')
-            valor_presente=float(dados[2])
-            cont += valor_presente
-    valor_que_falta = preco_cofrinho_arq-cont
-    if valor_que_falta > 0:
-        print("Faltam R$ ",valor_que_falta,"para completar sua meta, não desista!")
-    else:
-        print("Parabéns, você alcançou a sua meta! Volte para o menu e crie uma nova meta.")
+        cont=0
+        file=open("planilha.csv","r")
+        for linha in file:
+            dados = linha.lower().split(',')
+            if 'meta' == dados[1] and nome_cofrinho_arq == dados[0]:
+                print(f'{dados[0]:^12}{dados[1]:^12}{dados[2]:^12}')
+                valor_presente=float(dados[2])
+                cont += valor_presente
+        valor_que_falta = preco_cofrinho_arq-cont
+        if valor_que_falta > 0:
+            print("Faltam R$ ",valor_que_falta,"para completar sua meta, não desista!")
+        else:
+            print("Parabéns, você alcançou a sua meta! Volte para o menu e crie uma nova meta.")
+    except FileNotFoundError:
+        print("\33[31mArquivo não encontrado.\33[m")
