@@ -7,8 +7,8 @@ import funcoes as fc
 nome = 'planilha_gastos.csv'
 os.system('clear')
 while True:
-    resposta = menu.navegacao('Natália - Despesas Pessoais', ['Criar Planilha','Ver Planilha', 'Incluir gastos','Atualizar gastos', 'Deletar gastos', 'Pesquisar'])
-    if resposta > 6:
+    resposta = menu.navegacao('Natália - Despesas Pessoais', ['Criar Planilha','Ver Planilha', 'Incluir gastos','Atualizar gastos', 'Deletar gastos', 'Pesquisar', 'Soma Gastos', 'Criar Meta', 'Ver Meta'])
+    if resposta > 9:
         os.system('clear')
         print('\33[31mInsira algum valor de acordo com o menu de navegação\33[m')
     elif resposta == 0:
@@ -24,9 +24,14 @@ while True:
     elif resposta == 3:
         fc.incluir_gastos()
     elif resposta == 4:
-        fc.ver_planilha(nome)
         fc.atualizar_gastos()
     elif resposta == 5:
         fc.deletar(nome)
     elif resposta == 6:
         fc.filtrar(nome)
+    elif resposta == 7:
+        fc.soma_categoria()
+    elif resposta == 8:
+        fc.criar_meta()
+    elif resposta == 9:
+        fc.ver_meta()

@@ -26,7 +26,7 @@ def ver_planilha(nome):
         print(file.read())
         file.close()
     except FileNotFoundError:
-        print('\33[31mPlanilha não existe. Use a função planilha para criar.\33[m')
+        print('\33[31mPlanilha não existe. Escolha a opção 1 para criar a planilha.\33[m')
 
 def incluir_gastos():
     try:
@@ -45,23 +45,31 @@ def incluir_gastos():
     except Exception as e:
         print('\33[31mOcorreu um erro inesperado:\33[m', e)
 
-
 def atualizar_gastos():
-    nome=input("Antigo nome:")
-    novo_nome=input("Digite o novo nome: ")
-    categoria=input("Antiga categoria")
-    nova_categoria=input("Nova categoria: ")
-    atualize = open("planilha_gastos.csv", "r") 
-    atualize = ''.join([i for i in atualize])  
-    atualize = atualize.replace(nome, novo_nome)  
-    atualize = atualize.replace(categoria,nova_categoria) 
-    atualize_arq = open("planilha_gastos.csv","w") 
-    atualize_arq.writelines(atualize) 
-    atualize_arq.close()
-    file=open("planilha_gastos.csv","r")
-    print(file.read())
+    file = open("planilha_gastos.csv", "r")
+    linhas = list(file.readlines())
     file.close()
-    print("Gastos atualizados com sucesso.")
+    for indice, linha in enumerate(linhas):
+        dado = linha.strip().split(',')
+        print(f'{indice}{dado[0]:^12}{dado[1]:^12}{dado[2]:^12}')
+
+    linha_at = int(input("Qual linha você deseja atualizar? "))
+    qnt_at = int(input("Quantas partes você quer atualizar? "))
+    for i in range(qnt_at):
+        coluna = input("Qual coluna você deseja atualizar? (nome, categoria ou valor) ")
+        nova_palavra = input("O que você deseja colocar? ")
+        atualizado= linhas[linha_at].strip().split(',')
+        if coluna=="nome":
+            atualizado[0] = nova_palavra
+        if coluna=="categoria":
+            atualizado[1] = nova_palavra
+        if coluna=="valor":
+            atualizado[2] = (nova_palavra)
+        linhas[linha_at] = ','.join(atualizado) + '\n'
+        file = open("planilha_gastos.csv", "w")
+        file.writelines(linhas)
+        file.close()
+        print("Gastos atualizados com sucesso.")
 
 def filtrar(nome):
     try:
@@ -87,6 +95,7 @@ def deletar(nome):
                 arr_arq.append(dado)
                 dado[2] = dado[2].replace('\n', '')
                 print(f'{indice:^12}{dado[0]:^12}{dado[1]:^12}{dado[2]:^12}')
+        file.close()
         
         delecao = int(input("Digite o número da linha que deseja deletar: "))
 
@@ -98,6 +107,57 @@ def deletar(nome):
         with open("planilha_gastos.csv", "w") as file:
             for linha in arr_arq:
                 file.write(','.join(linha) + '\n')
+        file.close()
+        ver_planilha(nome)
     except ValueError:
          print("\33[31mEntrada inválida. Certifique-se de digitar um número inteiro.\33[m")
-    
+
+def soma_categoria():
+    cont=0
+    filtro = input("Qual categoria você deseja ver a soma? ")
+    file = open("planilha_gastos.csv", "r")
+    for linha in file:
+        i=0
+        dado = linha.split(',')
+        dado[i] = dado[i].replace('\n', '')
+        i+=1
+        for j in dado:
+            if j == filtro:
+                print(f'{dado[0]:^12}{dado[1]:^12}{dado[2]:^12}')
+                inteiro=float(dado[2])
+                cont=cont+inteiro
+    print(f'A soma total da categoria {filtro} R${cont}')
+    file.close()
+
+def criar_meta():
+    nome_cofrinho=input("Digite um título para sua meta(sugestão: o nome do objeto): ")
+    preco_cofrinho=float(input("Digite o valor da sua meta: \n"))
+    file=open("meta.csv","w")
+    file.write(f"{nome_cofrinho}\n")
+    file.write(f"{preco_cofrinho}")
+    file.close()
+
+
+def ver_meta():
+    linhas_cofre=[]
+    file=open("meta.csv","r")
+    for linha in file:
+        linhas_cofre.append(linha.strip())
+    file.close()
+
+    nome_cofrinho_arq=str(linhas_cofre[0])
+    preco_cofrinho_arq=float(linhas_cofre[1])
+
+    cont=0
+    file=open("planilha_gastos.csv","r")
+    for linha in file:
+        dados = linha.lower().split(',')
+        if 'meta' == dados[1] and nome_cofrinho_arq == dados[0]:
+            print(f'{dados[0]:^12}{dados[1]:^12}{dados[2]:^12}')
+            valor_presente=float(dados[2])
+            cont += valor_presente
+    valor_que_falta = preco_cofrinho_arq-cont
+    if valor_que_falta > 0:
+        print("Faltam R$ ",valor_que_falta,"para completar sua meta, não desista!")
+    else:
+        print("Parabéns, você alcançou a sua meta! Volte para o menu e crie uma nova meta.")
