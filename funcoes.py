@@ -30,13 +30,12 @@ def ver_planilha(nome):
 
 def incluir_gastos(nome):
     try:
-        nome_ = input('Digite o nome: ')
-        categoria = input('Qual a categoria que ele pertence: ')
+        nome_ = input('Digite o nome: ').rstrip(',')
+        categoria = input('Qual a categoria que ele pertence: ').rstrip(',')
         valor = float(input('Qual valor gasto: '))
         file = open(nome, 'a')
-        linha = f'\n{nome_},{categoria},{valor}'
+        linha = f'{nome_},{categoria},{valor}\n'
         file.write(linha)
-        file.close()
         print('\33[31mGasto incluído com sucesso.\33[m')
     except FileNotFoundError:
         print('\33[31mPlanilha não encontrada\33[m')
@@ -88,30 +87,24 @@ def filtrar(nome):
         print("\33[31mErro: Entrada inválida.\33[m,", e)
 
 def deletar(nome):
-    try:
-        arr_arq = []
-        with open(nome, "r+") as file:
-            for indice, linha in enumerate(file):
-                dado = linha.lower().split(',')
-                arr_arq.append(dado)
-                dado[2] = dado[2].replace('\n', '')
-                print(f'{indice:^12}{dado[0]:^12}{dado[1]:^12}{dado[2]:^12}')
-        file.close()
+    with open(nome, "r+") as file:
+        linhas = file.readlines()
+        file.seek(0)
         
+        for indice, linha in enumerate(linhas):
+            dado = linha.lower().split(',')
+            dado[2] = dado[2].replace('\n', '')
+            print(f'{indice:^12}{dado[0]:^12}{dado[1]:^12}{dado[2]:^12}')
+            
         delecao = int(input("Digite o número da linha que deseja deletar: "))
+        
+        file.seek(0)
+        for indice, linha in enumerate(linhas):
+            if indice != delecao:
+                file.write(linha)
 
-        if delecao < len(arr_arq):
-            arr_arq.pop(delecao)
-        else:
-            print("O número da linha é inválido.")
-
-        with open("planilha.csv", "w") as file:
-            for linha in arr_arq:
-                file.write(','.join(linha) + '\n')
-        file.close()
-        print("\33[31mLinha deletada.\33[m")
-    except ValueError:
-         print("\33[31mEntrada inválida. Certifique-se de digitar um número inteiro.\33[m")
+        file.truncate()
+    file.close()
 
 def soma_categoria(nome):
     cont=0
