@@ -14,7 +14,7 @@ while True:
         break
     elif resposta == 1: 
             if not fc.arquivoExiste(nome):
-                fc.criarArquivo(nome="planilha.csv", cabecalho='Nome,Categoria,Valor')
+                fc.criarArquivo(nome="planilha.csv", cabecalho='Nome,Categoria,Valor\n')
             else: 
                 print("Arquivo já existe")
     elif resposta == 2:
